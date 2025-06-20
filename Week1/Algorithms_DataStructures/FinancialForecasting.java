@@ -3,7 +3,7 @@ import java.util.*;
 
 public class FinancialForecasting {
 
-    // Recursive method to calculate future value
+    
     public static double futureValue(double presentValue, double rate, int years) {
         if (years == 0) {
             return presentValue;
