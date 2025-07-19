@@ -1,0 +1,12 @@
+BEGIN
+    FOR rec IN (SELECT CustomerID, Age, InterestRate FROM Customers) LOOP
+        IF rec.Age > 60 THEN
+            UPDATE Customers
+            SET InterestRate = InterestRate - 1
+            WHERE CustomerID = rec.CustomerID;
+            
+            DBMS_OUTPUT.PUT_LINE('1% discount applied to Customer ID: ' || rec.CustomerID);
+        END IF;
+    END LOOP;
+END;
+/

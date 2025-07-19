@@ -1,0 +1,37 @@
+CREATE OR REPLACE PROCEDURE TransferFunds (
+    p_SourceAccountID IN NUMBER,
+    p_TargetAccountID IN NUMBER,
+    p_Amount IN NUMBER
+) AS
+    v_SourceBalance NUMBER;
+BEGIN
+    -- Get the current balance of source account
+    SELECT Balance INTO v_SourceBalance
+    FROM Accounts
+    WHERE AccountID = p_SourceAccountID
+    FOR UPDATE;
+
+    -- Check sufficient balance
+    IF v_SourceBalance >= p_Amount THEN
+        -- Deduct from source account
+        UPDATE Accounts
+        SET Balance = Balance - p_Amount
+        WHERE AccountID = p_SourceAccountID;
+        
+        -- Add to target account
+        UPDATE Accounts
+        SET Balance = Balance + p_Amount
+        WHERE AccountID = p_TargetAccountID;
+        
+        DBMS_OUTPUT.PUT_LINE('Transferred ' || p_Amount || ' from Account ' || p_SourceAccountID || ' to Account ' || p_TargetAccountID);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Insufficient balance in source account: ' || p_SourceAccountID);
+    END IF;
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('One or both account IDs not found.');
+END;
+/
+EXEC TransferFunds(2001, 2002, 500);
+
